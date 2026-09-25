@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% set active = 'home' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Dashboard</h1>
+    <div class="subtitle">A quick view of the whole library.</div>
+  </div>
+</div>
+
+<!-- Every number below was counted by a MODEL. The template only prints it. -->
+<div class="stats">
+  <div class="stat">
+    <div class="label">Titles in catalogue</div>
+    <div class="value">{{ books.titles }}</div>
+    <div class="note">{{ books.copies }} physical copies</div>
+  </div>
+  <div class="stat teal">
+    <div class="label">Available now</div>
+    <div class="value">{{ books.available }}</div>
+    <div class="note">copies on the shelf</div>
+  </div>
+  <div class="stat amber">
+    <div class="label">On loan</div>
+    <div class="value">{{ loans.on_loan }}</div>
+    <div class="note">across {{ members }} members</div>
+  </div>
+  <div class="stat rust">
+    <div class="label">Overdue</div>
+    <div class="value">{{ loans.overdue }}</div>
+    <div class="note">Rs {{ loans.fines_due }} in fines due</div>
+  </div>
+</div>
+
+<div class="card">
+  <h1 style="font-size:17px; margin-bottom:14px;">Books currently out</h1>
+  <table>
+    <tr><th>Book</th><th>Member</th><th>Due on</th><th>Status</th><th>Fine</th></tr>
+    {% for loan in recent %}
+    <tr>
+      <td class="title-cell">{{ loan.book_title }}</td>
+      <td>{{ loan.member_name }} <span class="mono">({{ loan.roll_no }})</span></td>
+      <td class="muted">{{ loan.due_on }}</td>
+      <td>
+        {% if loan.status == 'Overdue' %}<span class="badge out">Overdue</span>
+        {% else %}<span class="badge ok">On loan</span>{% endif %}
+      </td>
+      <td>{% if loan.fine %}<strong>Rs {{ loan.fine }}</strong>{% else %}<span class="muted">&mdash;</span>{% endif %}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="muted">Nothing is on loan right now.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="hint">
+  <strong>MVC note:</strong> this page called
+  <code>Book.stats()</code>, <code>Member.count()</code> and <code>Loan.stats()</code>.
+  The template contains no SQL and no arithmetic &mdash; even the fine total was
+  calculated inside the Loan model.
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% set active = 'books' %}
+{% block title %}Add a book{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Add a book</h1>
+    <div class="subtitle">The Model validates this form, not the browser.</div>
+  </div>
+</div>
+
+<div class="card" style="max-width:640px">
+
+  {# These messages came back from Book.validate() in the MODEL. #}
+  {% if errors %}
+  <div class="errors">
+    <strong>Please fix the following:</strong>
+    <ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('books.create') }}">
+    <div class="field">
+      <label>Title</label>
+      <input type="text" name="title" value="{{ data.title or '' }}">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Author</label>
+        <input type="text" name="author" value="{{ data.author or '' }}">
+      </div>
+      <div class="field">
+        <label>ISBN</label>
+        <input type="text" name="isbn" value="{{ data.isbn or '' }}">
+      </div>
+    </div>
+    <div class="field" style="max-width:200px">
+      <label>Number of copies</label>
+      <input type="number" name="copies" value="{{ data.copies or 1 }}">
+    </div>
+    <button class="btn" type="submit">Save book</button>
+    <a class="btn secondary" href="{{ url_for('books.index') }}">Cancel</a>
+  </form>
+</div>
+
+<div class="hint">
+  <strong>MVC note:</strong> the controller ran
+  <code>Book.validate(...)</code> and, because it returned errors, rendered
+  <em>this same template</em> again with the messages. No rule was checked in
+  the controller and none in the HTML.
+</div>
+{% endblock %}

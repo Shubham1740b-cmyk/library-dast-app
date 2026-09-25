@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% set active = 'books' %}
+{% block title %}Books{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Book catalogue</h1>
+    <div class="subtitle">{{ books|length }} title(s) shown.</div>
+  </div>
+  <div class="spacer"></div>
+  <a class="btn" href="{{ url_for('books.new') }}">+ Add book</a>
+</div>
+
+<div class="card" style="margin-bottom:18px;">
+  <form class="search-bar" method="get" action="{{ url_for('books.index') }}">
+    <input type="text" name="q" value="{{ search }}"
+           placeholder="Search by title, author or ISBN">
+    <button class="btn secondary" type="submit">Search</button>
+  </form>
+</div>
+
+<div class="card">
+  <table>
+    <tr>
+      <th>Title</th><th>Author</th><th>ISBN</th>
+      <th>Copies</th><th>Availability</th><th></th>
+    </tr>
+    {% for book in books %}
+    <tr>
+      <td class="title-cell">{{ book.title }}</td>
+      <td class="muted">{{ book.author }}</td>
+      <td class="mono">{{ book.isbn }}</td>
+      <td class="muted">{{ book.available_copies }} of {{ book.total_copies }}</td>
+      <td>
+        {# is_available is a PROPERTY on the model, not an if-statement here #}
+        {% if book.is_available %}
+          <span class="badge ok">Available</span>
+        {% else %}
+          <span class="badge out">All copies out</span>
+        {% endif %}
+      </td>
+      <td style="text-align:right">
+        <form method="post" action="{{ url_for('books.delete', book_id=book.id) }}">
+          <button class="btn danger small" type="submit">Remove</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="muted">No books matched that search.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
