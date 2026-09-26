@@ -27,6 +27,7 @@ def create_app():
     )
     app.config["SECRET_KEY"] = config.SECRET_KEY
     app.config["LIBRARY_NAME"] = config.LIBRARY_NAME
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
     # Make library name available to all templates
     @app.context_processor
@@ -40,6 +41,16 @@ def create_app():
     app.register_blueprint(loan_bp)
 
     init_schema()                            # make sure the MODEL has tables
+
+    @app.after_request
+    def set_security_headers(response):
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Content-Security-Policy"] = "default-src 'self'"
+        response.headers["Referrer-Policy"] = "no-referrer-when-downgrade"
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+        return response
+
     return app
 
 
