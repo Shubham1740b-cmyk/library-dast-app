@@ -36,6 +36,9 @@ jobs:
       - name: Check response headers
         run: curl -sI http://localhost:5000
 
+      - name: Check response headers
+        run: curl -sI http://localhost:5000
+
       - name: ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.12.0
         with:
