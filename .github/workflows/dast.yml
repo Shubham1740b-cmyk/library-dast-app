@@ -40,11 +40,8 @@ jobs:
         run: curl -sI http://localhost:5000
 
       - name: ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
-        with:
-          target: 'http://localhost:5000'
-          fail_action: false
-          artifact_name: 'zap-scan_report'
+        run: |
+          docker run -v $(pwd):/zap/wrk/:rw --network=host -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://localhost:5000 -r report_html.html || true
 
       - name: Upload ZAP report
         if: always()
